@@ -1,28 +1,25 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class PlayerBehaviour : MonoBehaviour
-{
-    public InputActionReference move;
+{ 
     public Rigidbody rb;
-    private Vector3 moveDirection;
-    public float moveSpeed;
-    void Start()
+    public float moveSpeed = 5f;
+    float moveX;
+    float moveY;
+    private void Start()
     {
-
+        rb = GetComponent<Rigidbody>();
     }
-
-    // Update is called once per frame
-    void Update()
+    void OnMove(InputValue movementValue)
     {
-        moveDirection = move.action.ReadValue<Vector3>();
-
-
+        Vector2 movementVector = movementValue.Get<Vector2>();
+        moveX = movementVector.x;
+        moveY = movementVector.y;
     }
     private void FixedUpdate()
     {
-        rb.velocity = new Vector3(x: moveDirection.x * moveSpeed, y: moveDirection.y * moveSpeed, z: moveDirection.z * moveSpeed);
+        Vector3 movement = new Vector3(moveX, 0.0f, moveY);
+        rb.AddForce(movement * moveSpeed);
     }
 }
