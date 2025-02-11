@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PlayerBalance : MonoBehaviour
 {
-    public Rigidbody wheelRb;
+    /*public Rigidbody wheelRb;
     public Rigidbody bodyRb;
 
     // Parámetros para el PID o torque
@@ -25,5 +25,9 @@ public class PlayerBalance : MonoBehaviour
         // Aplica el torque en el eje de rotación adecuado (en este caso, el eje perpendicular a la rueda)
         // Asumiendo que la rueda gira alrededor del eje X, por ejemplo, aplicamos torque en Z para balancear
         bodyRb.AddTorque(transform.forward * -correctiveTorque, ForceMode.Force);
+    }*/
+    private void Update()
+    {
+        transform.Rotate(0, 0, 0);
     }
 }

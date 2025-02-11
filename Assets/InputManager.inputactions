@@ -1,0 +1,54 @@
+{
+    "name": "InputManager",
+    "maps": [
+        {
+            "name": "Move",
+            "id": "bd024193-e92b-40fc-93b2-895ffd1bc667",
+            "actions": [
+                {
+                    "name": "Alante",
+                    "type": "Value",
+                    "id": "421d74ae-dcc4-4300-ad51-791a8f593bea",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Atras",
+                    "type": "Button",
+                    "id": "0cda62ae-13f6-44db-9ecb-d636476918ba",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e1f50c8e-b4c4-4a9f-8176-a549fbf3bf83",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Alante",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "183a2c43-a61d-419f-8de3-a4474b2a294b",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Atras",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
