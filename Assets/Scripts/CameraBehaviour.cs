@@ -1,27 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraBehaviour : MonoBehaviour
 {
-    public Transform target;   // Objeto que rotará en Y (ej. el jugador)
-    public float sensitivity = 2f;  // Sensibilidad del mouse
-    public float minY = -30f;  // Límite inferior de la rotación vertical
-    public float maxY = 30f;   // Límite superior de la rotación vertical
+    public Transform target;          // Objeto que rota en Y (ej. el jugador)
+    public float sensitivity = 2f;      // Sensibilidad del mouse
+    public float minY = -30f;           // Límite inferior de la rotación vertical
+    public float maxY = 30f;            // Límite superior de la rotación vertical
 
     private float rotationX = 0f;
+    private float rotationY = 0f;
+    public float smoothTime = 0.1f;     // Factor de suavizado
+
+    private float lastMouseX;
+    private float currentMouseX;
 
     void Update()
     {
-        // Movimiento horizontal del mouse controla la rotación Y del target
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity;
-        target.Rotate(Vector3.up * mouseX);
+        // Obtener los valores del mouse
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
 
-        // Movimiento vertical del mouse controla la rotación X de la cámara
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
+        // Suavizar la entrada horizontal
+        currentMouseX = Mathf.Lerp(lastMouseX, mouseX, smoothTime);
+        lastMouseX = currentMouseX;
+
+        // Acumula la rotación horizontal y vertical
+        target.transform.Rotate(Vector2.up * currentMouseX);
         rotationX = Mathf.Clamp(rotationX - mouseY, minY, maxY);
-        transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+
+        // Aplica la rotación combinada
+        transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0f);
     }
 }
