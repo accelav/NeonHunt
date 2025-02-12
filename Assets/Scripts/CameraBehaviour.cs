@@ -1,37 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CameraBehaviour : MonoBehaviour
 {
-    public Transform target;          // Objeto que rota en Y (ej. el jugador)
-    public float sensitivity = 2f;      // Sensibilidad del mouse
-    public float minY = -30f;           // Límite inferior de la rotación vertical
-    public float maxY = 30f;            // Límite superior de la rotación vertical
+    /*public Transform player;          // El transform del jugador (padre de la cámara)
+    public float sensitivity = 2f;    // Sensibilidad del mouse
+    public float minY = -30f;         // Límite inferior de pitch
+    public float maxY = 30f;          // Límite superior de pitch
+    public float rotationSpeed = 5f;  // Velocidad de suavizado para el jugador
 
-    private float rotationX = 0f;
-    private float rotationY = 0f;
-    public float smoothTime = 0.1f;     // Factor de suavizado
+    private float cameraYaw;
+    private float playerYaw;
+    private float pitch;
 
-    private float lastMouseX;
-    private float currentMouseX;
+    void Start()
+    {
+        // Iniciar ambos yaw con el ángulo Y actual del jugador.
+        cameraYaw = player.eulerAngles.y;
+        playerYaw = cameraYaw;
+        // Tomar el pitch inicial a partir de la cámara.
+        pitch = transform.localEulerAngles.x;
+    }
 
     void Update()
     {
-        // Obtener los valores del mouse
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        // 1. Obtener la entrada del ratón
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
 
-        // Suavizar la entrada horizontal
-        currentMouseX = Mathf.Lerp(lastMouseX, mouseX, smoothTime);
-        lastMouseX = currentMouseX;
+        // 2. Acumular el giro instantáneo de la cámara
+        cameraYaw += mouseX;
+        pitch = Mathf.Clamp(pitch - mouseY, minY, maxY);
 
-        // Acumula la rotación horizontal y vertical
-        target.transform.Rotate(Vector2.up * currentMouseX);
-        rotationX = Mathf.Clamp(rotationX - mouseY, minY, maxY);
+        // 3. Ajustar la rotación local de la cámara
+        //    (el yaw local es la diferencia entre la cámara y el jugador)
+        transform.localRotation = Quaternion.Euler(pitch, cameraYaw - playerYaw, 0f);
 
-        // Aplica la rotación combinada
-        transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0f);
-    }
+        // 4. Suavizar la rotación del jugador para que vaya “alcanzando” cameraYaw
+        playerYaw = Mathf.LerpAngle(playerYaw, cameraYaw, Time.deltaTime * rotationSpeed);
+
+        // 5. Aplicar ese yaw al jugador
+        player.rotation = Quaternion.Euler(0f, playerYaw, 0f);
+    }*/
 }

@@ -153,7 +153,7 @@
                 {
                     "name": "Left",
                     "id": "480f5dcd-5d25-480b-be16-ec409384d975",
-                    "path": "",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -164,7 +164,7 @@
                 {
                     "name": "Right",
                     "id": "9da1b555-0272-44f0-b8c2-8c02327a370c",
-                    "path": "",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

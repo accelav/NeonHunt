@@ -1,57 +1,162 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("Camera References")]
+    public Transform cameraTransform;     // Cámara, hija del jugador
+
+    [Header("Movement Settings")]
+    public float speed = 10f;            // Velocidad W/S
+    public float acceleration = 5f;      // Suavizado de velocidad
+    public float rotationSmooth = 5f;    // Suavizado al rotar el jugador para “seguir” a la cámara
+
+    [Header("Mouse Look Settings")]
+    public float mouseSensitivity = 2f;  // Sensibilidad del ratón
+    public float minPitch = -30f;        // Límite inferior
+    public float maxPitch = 30f;         // Límite superior
+
+    [Header("Key Rotation Settings (A/D)")]
+    public float turnSpeed = 100f;       // Velocidad de rotación horizontal al mantener A/D
+
+    [Header("Wheel Rotation")]
+    public Transform wheelTransform;     // Rueda (u otro objeto) que se quiere rotar según la velocidad
+
+    [Header("Animations")]
+
+    Animator animator;
+    // Variables de entrada (Nuevo Input System)
+    private Vector2 moveInput;           // W/S/A/D
+    private Vector2 lookInput;           // Ratón
+
+    // Rotaciones internas
+    private float cameraYaw;  // “Yaw de la cámara” (suma ratón + A/D)
+    private float playerYaw;  // Yaw real del jugador (se suaviza)
+    private float pitch;      // Rotación vertical de la cámara (x)
+
     private Rigidbody rb;
-    public float speed = 10f;
-    public float speedSmother = 5f;
-    private Vector2 movement;
 
-    public bool isGrounded = false;
-
-    public Transform wheelTransform;
-
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        animator = GetComponent<Animator>();
+
+        // Tomar la rotación inicial
+        cameraYaw = transform.eulerAngles.y;
+        playerYaw = cameraYaw;
+        pitch = cameraTransform.localEulerAngles.x;
     }
 
-    void OnMove(InputValue movementValue)
+    // ------------------------------
+    // NUEVO INPUT SYSTEM: CALLBACKS
+    // ------------------------------
+    void OnMove(InputValue value)
     {
-        movement = movementValue.Get<Vector2>();
+        moveInput = value.Get<Vector2>();
     }
 
-    private void FixedUpdate()
+    void OnLook(InputValue value)
     {
-        MoverPlayer();
+        lookInput = value.Get<Vector2>();
     }
 
-    void MoverPlayer()
+    // ------------------------------
+    // UNITY LOOP
+    // ------------------------------
+    void Update()
     {
+        HandleMouseLook();
+        HandleKeyRotationContinuous();
+        SmoothRotatePlayer();
+    }
+
+    void FixedUpdate()
+    {
+        MovePlayer();
+    }
+
+    // ------------------------------
+    // 1) CONTROL DE LA MIRADA (MOUSE) EN PITCH/YAW
+    // ------------------------------
+    private void HandleMouseLook()
+    {
+        float mouseX = lookInput.x * mouseSensitivity;
+        float mouseY = lookInput.y * mouseSensitivity;
+
+        // Sumar la rotación horizontal del mouse al Yaw de la cámara
+        cameraYaw += mouseX;
+
+        // Controlar el Pitch (vertical) con límites
+        pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
+
+        // La cámara gira localmente en (pitch, offsetYaw, 0)
+        // offsetYaw = cameraYaw - playerYaw => la diferencia entre la “rotación instantánea” y la del jugador
+        cameraTransform.localRotation = Quaternion.Euler(pitch, cameraYaw - playerYaw, 0f);
+    }
+
+    // ------------------------------
+    // 2) ROTACIÓN CONTINUA CON A/D
+    // ------------------------------
+    private void HandleKeyRotationContinuous()
+    {
+        // moveInput.x -> A/D
+        // Si es > 0, rotar a la derecha; si < 0, rotar a la izquierda
+        float horizontal = moveInput.x;
+
+        // Añadir rotación (en grados/segundo) al cameraYaw
+        // Mientras más tiempo esté pulsado, más gira
+        cameraYaw += horizontal * turnSpeed * Time.deltaTime;
 
 
-        // Obtener las direcciones de la cámara (forward y right) sin la componente vertical.
-        Vector3 camForward = Camera.main.transform.forward;
-        camForward.y = 0;
+    }
+
+    // ------------------------------
+    // 3) SUAVIZAR LA ROTACIÓN DEL JUGADOR HACIA cameraYaw
+    // ------------------------------
+    private void SmoothRotatePlayer()
+    {
+        // Interpola el Yaw del jugador hacia el Yaw “instantáneo” de la cámara
+        playerYaw = Mathf.LerpAngle(playerYaw, cameraYaw, rotationSmooth * Time.deltaTime);
+
+        // Aplicar la rotación final
+        transform.rotation = Quaternion.Euler(0f, playerYaw, 0f);
+    }
+
+    // ------------------------------
+    // 4) MOVER AL JUGADOR (W/S) SEGÚN LA CÁMARA
+    // ------------------------------
+    private void MovePlayer()
+    {
+        // Sacar la dirección adelante/derecha de la cámara, ignorando Y
+        Vector3 camForward = cameraTransform.forward;
+        camForward.y = 0f;
         camForward.Normalize();
 
-        Vector3 camRight = Camera.main.transform.right;
-        camRight.y = 0;
+        Vector3 camRight = cameraTransform.right;
+        camRight.y = 0f;
         camRight.Normalize();
 
-        // Calcular la velocidad objetivo en función de la entrada y la dirección de la cámara.
-        Vector3 targetVelocity = (camForward * movement.y + camRight * movement.x) * speed;
-        // Mantener la componente vertical para que la gravedad siga actuando.
-        targetVelocity.y = rb.velocity.y;
+        // Mover en W/S -> moveInput.y
+        // (A/D no mueve lateralmente aquí, pues lo usamos para girar)
+        Vector3 desiredVelocity = camForward * moveInput.y * speed;
+        desiredVelocity.y = rb.velocity.y; // Mantener el eje Y (gravedad)
 
-        // Suavizar la transición entre la velocidad actual y la velocidad objetivo.
-        rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, speedSmother * Time.deltaTime);
+        // Aplicar suavizado
+        rb.velocity = Vector3.Lerp(rb.velocity, desiredVelocity, acceleration * Time.fixedDeltaTime);
 
 
-        wheelTransform.transform.Rotate(rb.velocity.z, 0, 0);   
+
+        // 5) ROTAR LA RUEDA SEGÚN LA VELOCIDAD
+        // ------------------------------
+        if (wheelTransform != null)
+        {
+            // Ejemplo básico: rotar la rueda en el eje X según la magnitud de la velocidad.
+            // Ajusta el factor (p.e. 5f) según el tamaño de la rueda o la sensación que desees.
+            float rotationAmount = rb.velocity.magnitude * 20f * Time.fixedDeltaTime;
+            wheelTransform.Rotate(rotationAmount, 0f, 0f);
+        }
     }
 }
