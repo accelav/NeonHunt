@@ -15,9 +15,7 @@ public class FollowTarget : MonoBehaviour
         {
             // Calcula la posición deseada basada en el target y el offset
             Vector3 desiredPosition = target.position + offset;
-            // Interpola suavemente la posición actual a la posición deseada
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-            transform.position = smoothedPosition;
+            transform.position = desiredPosition;
         }
     }
 }
