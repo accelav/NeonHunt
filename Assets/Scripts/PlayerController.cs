@@ -38,6 +38,20 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
 
+    public float gravitySpeed;
+
+    LayerMask layerMask;
+    public bool rayGrounded;
+    [SerializeField]
+    float offsetGrounded;
+
+    [SerializeField]
+    private float maxTiltAngle = 0.5f;
+
+    private float currentTiltX = 0f;
+    private float currentTiltZ = 0f;
+    public float smoothSpeed = 10f; // Ajusta este valor para controlar la velocidad de la transición
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -48,6 +62,7 @@ public class PlayerController : MonoBehaviour
         cameraYaw = transform.eulerAngles.y;
         playerYaw = cameraYaw;
         pitch = cameraTransform.localEulerAngles.x;
+        animator = GetComponent<Animator>();
     }
 
     // ------------------------------
@@ -71,6 +86,7 @@ public class PlayerController : MonoBehaviour
         HandleMouseLook();
         HandleKeyRotationContinuous();
         SmoothRotatePlayer();
+        CheckGround();
     }
 
     void FixedUpdate()
@@ -94,7 +110,7 @@ public class PlayerController : MonoBehaviour
 
         // La cámara gira localmente en (pitch, offsetYaw, 0)
         // offsetYaw = cameraYaw - playerYaw => la diferencia entre la “rotación instantánea” y la del jugador
-        cameraTransform.localRotation = Quaternion.Euler(pitch, cameraYaw - playerYaw, 0f);
+        cameraTransform.localRotation = Quaternion.Euler(pitch, cameraYaw, 0f);
     }
 
     // ------------------------------
@@ -130,6 +146,8 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     private void MovePlayer()
     {
+
+
         // Sacar la dirección adelante/derecha de la cámara, ignorando Y
         Vector3 camForward = cameraTransform.forward;
         camForward.y = 0f;
@@ -141,13 +159,29 @@ public class PlayerController : MonoBehaviour
 
         // Mover en W/S -> moveInput.y
         // (A/D no mueve lateralmente aquí, pues lo usamos para girar)
-        Vector3 desiredVelocity = camForward * moveInput.y * speed;
-        desiredVelocity.y = rb.velocity.y; // Mantener el eje Y (gravedad)
+        Physics.gravity = new Vector3(0, gravitySpeed, 0); // La gravedad debe ser negativa para que actúe hacia abajo
 
-        // Aplicar suavizado
-        rb.velocity = Vector3.Lerp(rb.velocity, desiredVelocity, acceleration * Time.fixedDeltaTime);
+        // Calcula la velocidad horizontal actual y la deseada (sin la componente Y)
+        Vector3 currentHorizontal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        Vector3 targetHorizontal = camForward * moveInput.y * speed;
 
+        // Suaviza solo las componentes horizontales
+        Vector3 newHorizontal = Vector3.Lerp(currentHorizontal, targetHorizontal, acceleration * Time.fixedDeltaTime);
 
+        // Actualiza la velocidad del Rigidbody combinando el nuevo vector horizontal con la velocidad vertical actual
+        rb.velocity = new Vector3(newHorizontal.x, rb.velocity.y, newHorizontal.z);
+
+        // Define los valores objetivo a partir del input
+        float targetTiltX = -moveInput.y; // O cualquier factor que necesites
+        float targetTiltZ = moveInput.x;
+
+        // Interpola suavemente desde el valor actual al objetivo
+        currentTiltX = Mathf.Lerp(currentTiltX, targetTiltX, smoothSpeed * Time.deltaTime);
+        currentTiltZ = Mathf.Lerp(currentTiltZ, targetTiltZ, smoothSpeed * Time.deltaTime);
+
+        // Envía los valores al Animator
+        animator.SetFloat("TiltX", currentTiltX);
+        animator.SetFloat("TiltZ", currentTiltZ);
 
         // 5) ROTAR LA RUEDA SEGÚN LA VELOCIDAD
         // ------------------------------
@@ -157,6 +191,21 @@ public class PlayerController : MonoBehaviour
             // Ajusta el factor (p.e. 5f) según el tamaño de la rueda o la sensación que desees.
             float rotationAmount = rb.velocity.magnitude * 20f * Time.fixedDeltaTime;
             wheelTransform.Rotate(rotationAmount, 0f, 0f);
+
         }
+    }
+    void LateUpdate()
+    {
+        // Conserva la rotación animada en X y Z,
+        // pero fuerza la rotación en Y según el control del script.
+        Vector3 currentEuler = transform.rotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(currentEuler.x, playerYaw, currentEuler.z);
+    }
+
+    private void CheckGround()
+    {
+        Vector3 posicion = new Vector3(transform.position.x, transform.position.y - offsetGrounded, transform.position.z);
+        rayGrounded = Physics.CheckSphere(posicion, 0.3f , layerMask , QueryTriggerInteraction.Ignore);
+      
     }
 }
