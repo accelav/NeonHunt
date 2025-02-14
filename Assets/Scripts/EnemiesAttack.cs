@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class EnemyDetection : MonoBehaviour
+public class EnemiesAttack : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Player Detectado");
+            Debug.Log("Player Muerto");
         }
     }
 }
