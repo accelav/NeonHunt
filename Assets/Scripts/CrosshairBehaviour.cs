@@ -2,58 +2,61 @@ using UnityEngine;
 
 public class CrosshairBehaviour : MonoBehaviour
 {
-    public Camera cam;
     public float maxDistance = 20f;
     public GameObject mirilla;
     [SerializeField] private Vector3 tamañoMaxMirilla;
     [SerializeField] private float timeAnim = 1f;
     [SerializeField] float sphereRadius = 2f;
-    // Estado para controlar si estamos apuntando a enemigo
-    private bool hayEnemigo = false;
+
     private Vector3 tamañoOriginal;
-    bool enemigoDetectado = false;
 
     private void Start()
     {
         tamañoOriginal = mirilla.transform.localScale;
-        
     }
 
     private void Update()
     {
-        // Disparamos un ray desde la cámara hacia delante
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        RaycastHit hit;
+        // Calcula la dirección forward
+        Vector3 direccion = transform.forward;
 
-        
-        if (Physics.SphereCast(ray, sphereRadius, out hit, maxDistance))
+        // Realiza un SphereCastAll desde la posición actual hacia adelante
+        RaycastHit[] hits = Physics.SphereCastAll(transform.position, sphereRadius, direccion, maxDistance);
+        bool enemigoDetectado = false;
+        foreach (RaycastHit hit in hits)
         {
-            Debug.Log("Rayo Colisionado");
+            //Debug.Log("SphereCastAll hit: " + hit.collider.gameObject.name);
             if (hit.collider.gameObject.CompareTag("Enemy"))
             {
                 enemigoDetectado = true;
+                break;
             }
-            else
+        }
+
+        // Si detectamos al enemigo, iniciamos el tween solo si aún no está en curso
+        if (enemigoDetectado)
+        {
+            if (!LeanTween.isTweening(mirilla))
             {
-                enemigoDetectado = false;
+                LeanTween.scale(mirilla, tamañoMaxMirilla, timeAnim).setLoopPingPong();
+                Debug.Log("Enemigo en el blanco");
             }
-
         }
-
-        // Si encontramos un enemigo y todavía no habíamos empezado la animación
-        if (enemigoDetectado && !hayEnemigo)
+        // Si ya no detectamos al enemigo, cancelamos el tween y restauramos la escala original
+        else
         {
-            hayEnemigo = true;
-            LeanTween.scale(mirilla, tamañoMaxMirilla, timeAnim).setLoopPingPong();
-            Debug.Log("enemigoDetectado -> iniciando animación");
+            if (LeanTween.isTweening(mirilla))
+            {
+                LeanTween.cancel(mirilla);
+                mirilla.transform.localScale = tamañoOriginal;
+                Debug.Log("Enemigo Perdido");
+            }
         }
-        // Si dejamos de ver un enemigo y la animación estaba activa
-        /*else*/ if (!enemigoDetectado && hayEnemigo)
-        {
-            hayEnemigo = false;
-            LeanTween.cancel(mirilla);
-            mirilla.transform.localScale = tamañoOriginal;
-            Debug.Log("enemigo perdido -> cancelando animación");
-        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * maxDistance);
     }
 }
