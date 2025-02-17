@@ -1,53 +1,55 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GenericPool : MonoBehaviour
+public class BulletPool : MonoBehaviour
 {
-    Stack<GameObject> _pool = new Stack<GameObject>();
+    public static BulletPool Instance { get; private set; }
 
-    [SerializeField]
-    GameObject prefabToInstantiate;
+    public GameObject bulletPrefab;
+    public int poolSize = 10;
 
-    [SerializeField]
-    int poolSize;
+    private Queue<GameObject> bulletPool = new Queue<GameObject>();
 
-    [SerializeField]
-    GameObject cañones;
-    void Start()
+    private void Awake()
     {
-        for ( int i = 0; i < poolSize; i++)
+        if (Instance == null)
         {
-            CreateElement();
-        }
-    }
-    GameObject CreateElement()
-    {
-        GameObject temporalElement = Instantiate(prefabToInstantiate, Vector3.zero, Quaternion.identity);
-        temporalElement.GetComponent<BuletBehaviour>().bulletPool = this;
-        _pool.Push(temporalElement);
-        temporalElement.SetActive(false);
-        return temporalElement;
-    }
-
-    public GameObject GetElementFromPool()
-    {
-        GameObject toReturn = null;
-        if (_pool.Count == 0)
-        {
-            toReturn = Instantiate(prefabToInstantiate, cañones.transform.position, Quaternion.identity);
-            toReturn.SetActive(false);
+            Instance = this;
         }
         else
         {
-            toReturn = _pool.Pop();
+            Destroy(gameObject);
         }
-        return toReturn;
     }
 
-    public void ReturnToPool(GameObject element)
+    private void Start()
     {
-        element.SetActive(false);
-        _pool.Push(element);
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject bullet = Instantiate(bulletPrefab);
+            bullet.SetActive(false);
+            bulletPool.Enqueue(bullet);
+        }
+    }
+
+    public GameObject GetBullet()
+    {
+        if (bulletPool.Count > 0)
+        {
+            GameObject bullet = bulletPool.Dequeue();
+            bullet.SetActive(true);
+            return bullet;
+        }
+        else
+        {
+            GameObject bullet = Instantiate(bulletPrefab);
+            return bullet;
+        }
+    }
+
+    public void ReturnBullet(GameObject bullet)
+    {
+        bullet.SetActive(false);
+        bulletPool.Enqueue(bullet);
     }
 }

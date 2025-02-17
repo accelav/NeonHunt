@@ -1,32 +1,59 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
 
 public class CañonesBehaviour : MonoBehaviour
 {
     private Animator animator;
-    float trigger;
-    // Start is called before the first frame update
+    public Transform firePoint;
+    public float fireRate = 0.5f;
+    private float nextFireTime;
+    public Camera cam;
+    private Transform enemigoTransform;  // Referencia al transform del enemigo
+    private CrosshairBehaviour crosshair;  // Referencia al script CrosshairBehaviour
+    public Vector3 targetPosition;
+    Bullet Bullet;
+
     void Awake()
     {
         animator = GetComponent<Animator>();
+        crosshair = FindObjectOfType<CrosshairBehaviour>();  // Encontrar el script de crosshair
+        Bullet = GetComponent<Bullet>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-
-    }
     void OnClick(InputValue value)
     {
-
-        if (value.isPressed)
+        if (value.isPressed && Time.time >= nextFireTime)
         {
             animator.SetTrigger("Disparo");
-        }
 
+            // Si hay un enemigo detectado
+            if (crosshair != null && crosshair.enemigoDetectado)
+            {
+                // Disparamos hacia el enemigo
+                GameObject bullet = BulletPool.Instance.GetBullet();
+                bullet.transform.position = firePoint.position;
+
+                // Usamos el Transform del padre del enemigo detectado
+                enemigoTransform = crosshair.enemigoDetectadoObj.parent;  // Obtenemos el transform del padre
+
+                // Disparo hacia el enemigo
+                Vector3 shootDirection = -transform.up;//(enemigoTransform.position - firePoint.position).normalized;
+                bullet.GetComponent<Bullet>().Initialize(shootDirection, enemigoTransform);
+
+            }
+            else
+            {
+                // Si no hay enemigo, disparar en línea recta
+                GameObject bullet = BulletPool.Instance.GetBullet();
+                bullet.transform.position = firePoint.position;
+
+                // Disparo hacia el enemigo
+                Vector3 shootDirection = -transform.up;//(enemigoTransform.position - firePoint.position).normalized;
+                bullet.GetComponent<Bullet>().Initialize(shootDirection, null);
+
+            }
+
+            nextFireTime = Time.time + fireRate;
+        }
     }
 }

@@ -102,14 +102,9 @@ public class PlayerController : MonoBehaviour
         float mouseX = lookInput.x * mouseSensitivity;
         float mouseY = lookInput.y * mouseSensitivity;
 
-        // Sumar la rotación horizontal del mouse al Yaw de la cámara
         cameraYaw += mouseX;
 
-        // Controlar el Pitch (vertical) con límites
         pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
-
-        // La cámara gira localmente en (pitch, offsetYaw, 0)
-        // offsetYaw = cameraYaw - playerYaw => la diferencia entre la “rotación instantánea” y la del jugador
         cameraTransform.localRotation = Quaternion.Euler(pitch, cameraYaw, 0f);
     }
 
@@ -134,10 +129,8 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     private void SmoothRotatePlayer()
     {
-        // Interpola el Yaw del jugador hacia el Yaw “instantáneo” de la cámara
         playerYaw = Mathf.LerpAngle(playerYaw, cameraYaw, rotationSmooth * Time.deltaTime);
 
-        // Aplicar la rotación final
         transform.rotation = Quaternion.Euler(0f, playerYaw, 0f);
     }
 
@@ -147,8 +140,6 @@ public class PlayerController : MonoBehaviour
     private void MovePlayer()
     {
 
-
-        // Sacar la dirección adelante/derecha de la cámara, ignorando Y
         Vector3 camForward = cameraTransform.forward;
         camForward.y = 0f;
         camForward.Normalize();
@@ -157,8 +148,6 @@ public class PlayerController : MonoBehaviour
         camRight.y = 0f;
         camRight.Normalize();
 
-        // Mover en W/S -> moveInput.y
-        // (A/D no mueve lateralmente aquí, pues lo usamos para girar)
         Physics.gravity = new Vector3(0, gravitySpeed, 0); // La gravedad debe ser negativa para que actúe hacia abajo
 
         // Calcula la velocidad horizontal actual y la deseada (sin la componente Y)
