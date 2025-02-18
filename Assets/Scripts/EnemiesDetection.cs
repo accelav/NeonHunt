@@ -2,17 +2,31 @@ using UnityEngine;
 
 public class EnemyDetection : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    [SerializeField]
+    float sphereCastRadius = 10f;
+    [SerializeField]
+    float maxRayDistance = 0;
+    private void Update()
     {
-        if (other.gameObject.CompareTag("Player"))
+        RaycastHit[] hits = Physics.SphereCastAll(
+            transform.position,
+            sphereCastRadius,
+            transform.forward,
+            maxRayDistance);
+
+        foreach (RaycastHit hit in hits)
         {
-            Debug.Log("Player Detectado");
+            if (hit.collider.gameObject.CompareTag("Player"))
+            {
+                Debug.Log("Player Detectado");
+            }
         }
-    } private void OnTriggerExit(Collider other)
+
+    }
+
+    private void OnDrawGizmos()
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("Player fuera de peligro");
-        }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sphereCastRadius);
     }
 }
