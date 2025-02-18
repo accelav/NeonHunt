@@ -6,6 +6,7 @@ public class CrosshairBehaviour : MonoBehaviour
     public GameObject mirilla;
     [SerializeField] private Vector3 tamañoMaxMirilla;
     [SerializeField] private float timeAnim = 1f;
+    [SerializeField] float sphereRadius = 0.5f;  // Reducir el radio del SphereCast
     public bool enemigoDetectado = false;
     private Vector3 tamañoOriginal;
 
@@ -22,22 +23,20 @@ public class CrosshairBehaviour : MonoBehaviour
         Vector3 direccion = transform.forward;
 
         // Realiza un SphereCastAll desde la posición actual hacia adelante
-        RaycastHit hit;
+        RaycastHit[] hits = Physics.SphereCastAll(transform.position, sphereRadius, direccion, maxDistance);
         enemigoDetectado = false;
         enemigoDetectadoObj = null;  // Restablecer al no detectar al enemigo
-        Physics.Raycast(transform.position, direccion, out hit, maxDistance);
-        if (hit.collider.CompareTag("Enemy"))
-        {
-            enemigoDetectado = true;
-            enemigoDetectadoObj = hit.collider.transform;  // Guardamos el Transform del enemigo detectado
 
-        }
-        else
+        foreach (RaycastHit hit in hits)
         {
-            enemigoDetectado = false;
-            enemigoDetectadoObj = null;
+            // Filtramos solo objetos con el tag "Enemy"
+            if (hit.collider.CompareTag("Enemy"))
+            {
+                enemigoDetectado = true;
+                enemigoDetectadoObj = hit.collider.transform;  // Guardamos el Transform del enemigo detectado
+                break; // Si encontramos un enemigo, ya no necesitamos continuar buscando
+            }
         }
-
 
         // Animación de la mirilla
         if (enemigoDetectado)

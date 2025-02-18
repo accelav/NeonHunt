@@ -116,13 +116,14 @@ GameObject:
   m_Component:
   - component: {fileID: 8887605204749118278}
   - component: {fileID: 4624382273265069993}
+  - component: {fileID: 7847960361923504478}
   m_Layer: 0
   m_Name: AttackZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8887605204749118278
 Transform:
   m_ObjectHideFlags: 0
@@ -161,6 +162,18 @@ CapsuleCollider:
   m_Height: 0.15
   m_Direction: 1
   m_Center: {x: 0, y: 0.025, z: 0}
+--- !u!114 &7847960361923504478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4324609878459698604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41161676ac39a8840ace736e5570191b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5122673026404000277
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +225,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.02
+  m_Radius: 0.03
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8528723755991455073
 GameObject:
@@ -231,7 +244,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6910340328621758943
 Transform:
   m_ObjectHideFlags: 0
@@ -280,8 +293,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74014172cd4860743862de36493fecc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sphereCastRadius: 0
-  maxRayDistance: 0
 --- !u!1 &8950686452937626501
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,12 +305,8 @@ GameObject:
   - component: {fileID: 3537172462736413057}
   - component: {fileID: 4863951953018996369}
   - component: {fileID: 7614697343831538894}
-  - component: {fileID: 8410403650071500251}
   - component: {fileID: 659270665897188310}
-  - component: {fileID: 975465294708636912}
-  - component: {fileID: 8494411534085560460}
-  - component: {fileID: 4097062887144377258}
-  - component: {fileID: 4105042632026195963}
+  - component: {fileID: 8410403650071500251}
   m_Layer: 0
   m_Name: EnemigoJonay
   m_TagString: EnemyParent
@@ -403,6 +410,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &659270665897188310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950686452937626501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47505c646bea3054dad188f6da6b14ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &8410403650071500251
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -422,81 +441,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.009
-  m_Center: {x: 0, y: -0.001, z: 0}
---- !u!114 &659270665897188310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950686452937626501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47505c646bea3054dad188f6da6b14ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &975465294708636912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950686452937626501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74014172cd4860743862de36493fecc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sphereCastRadius: 20
-  maxRayDistance: 0
---- !u!114 &8494411534085560460
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950686452937626501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41161676ac39a8840ace736e5570191b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sphereCastRadius: 3
-  maxRayDistance: 10
---- !u!195 &4097062887144377258
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950686452937626501}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.007595366
-  m_Speed: 1.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0.1
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 0.0209
-  m_BaseOffset: 0.01456
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &4105042632026195963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950686452937626501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bfc012e1f65982418e6b9450c01804c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  navMeshAgent: {fileID: 4097062887144377258}
-  waypoints: []
+  m_Radius: 0.008453271
+  m_Center: {x: -0.0000017457642, y: 0.001, z: 0.00076341047}

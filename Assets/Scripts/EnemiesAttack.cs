@@ -1,47 +1,12 @@
-using TreeEditor;
 using UnityEngine;
-using static UnityEditor.ShaderData;
 
 public class EnemiesAttack : MonoBehaviour
 {
-
-    [SerializeField]
-    float sphereCastRadius;
-    [SerializeField]
-    float maxRayDistance;
-
-    private void Update()
+    private void OnTriggerEnter(Collider other)
     {
-
-        RaycastHit[] hits = Physics.SphereCastAll(
-            transform.position,
-            sphereCastRadius,
-            transform.forward,
-            maxRayDistance
-            
-        );
-
-        foreach (RaycastHit hit in hits)
+        if (other.gameObject.CompareTag("Player"))
         {
-            if (hit.collider.CompareTag("Player"))
-            {
-                Debug.Log("Player Muerto");
-            }
-        }
-    }
-
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        
-        float maxDistance = maxRayDistance;
-        Vector3 basePosition = transform.position;
-
-        for (float j = 0; j < maxDistance; j++)
-        {
-            Vector3 spherePosition = basePosition + transform.forward * j;
-            Gizmos.DrawWireSphere(spherePosition, sphereCastRadius);
+            Debug.Log("Player Muerto");
         }
     }
 }
