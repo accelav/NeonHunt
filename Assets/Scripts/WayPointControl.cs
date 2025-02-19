@@ -10,17 +10,40 @@ public class WaypointPatrol : MonoBehaviour
 
     int m_CurrentWaypointIndex;
 
+    PlayerController playerController;
+    Vector3 currentPlayerPosition;
+    Vector3 realWaypoint;
+    public bool followPlayer = false;
+
     void Start()
     {
         navMeshAgent.SetDestination(waypoints[0].position);
+        playerController = FindAnyObjectByType<PlayerController>();
+        realWaypoint = waypoints[1].position;
     }
 
     void Update()
     {
-        if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+        currentPlayerPosition = playerController.transform.position;
+        
+
+        if (followPlayer)
+        {
+            waypoints[2].position = currentPlayerPosition;
+            navMeshAgent.SetDestination(waypoints[2].position);
+        }
+
+        else
+        {
+            waypoints[1].position = realWaypoint;
+            if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
         {
             m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
             navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
         }
+        }
+
+
+
     }
 }
