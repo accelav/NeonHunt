@@ -19,7 +19,7 @@ public class WaypointPatrol : MonoBehaviour
     {
         navMeshAgent.SetDestination(waypoints[0].position);
         playerController = FindAnyObjectByType<PlayerController>();
-        realWaypoint = waypoints[1].position;
+        realWaypoint = waypoints[2].position;
     }
 
     void Update()

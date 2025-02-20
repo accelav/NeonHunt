@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     // Variables de entrada (Nuevo Input System)
+    [SerializeField]
     private Vector2 moveInput;           // W/S/A/D
     private Vector2 lookInput;           // Ratón
 
@@ -45,8 +46,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float offsetGrounded;
 
-    [SerializeField]
-    private float maxTiltAngle = 0.5f;
 
     private float currentTiltX = 0f;
     private float currentTiltZ = 0f;
@@ -71,6 +70,7 @@ public class PlayerController : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        Debug.Log("moveInput " + moveInput);
     }
 
     void OnLook(InputValue value)
