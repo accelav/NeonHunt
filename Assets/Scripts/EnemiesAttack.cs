@@ -9,7 +9,7 @@ public class EnemiesAttack : MonoBehaviour
     float sphereCastRadius;
     [SerializeField]
     float maxRayDistance;
-
+    
     private void Update()
     {
 
@@ -26,6 +26,7 @@ public class EnemiesAttack : MonoBehaviour
             if (hit.collider.CompareTag("Player"))
             {
                 Debug.Log("Player Muerto");
+
                 GameManager.Instance.ReempezarPartida();
             }
         }

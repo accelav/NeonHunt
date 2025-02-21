@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public bool restarting;
     public bool estaContando;
     public bool startButton = false;
+    public bool estaDetectando = false;
+    public bool estaMuerto = false;
 
     public float timer;
 

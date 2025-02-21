@@ -23,14 +23,16 @@ public class EnemyDetection : MonoBehaviour
             transform.forward,
             maxRayDistance);
         waypointPatrol.followPlayer = false;
+        GameManager.Instance.estaDetectando = false;
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.gameObject.CompareTag("Player"))
             {
                 Debug.Log("Player Detectado");
                 waypointPatrol.followPlayer = true;
+                GameManager.Instance.estaDetectando = true;
             }
-            
+
         }
 
     }

@@ -3,13 +3,20 @@ using UnityEngine.SceneManagement; // Para cargar escenas
 #if UNITY_EDITOR
 using UnityEditor;                // Para salir desde el editor
 #endif
+using TMPro;
 
-public class MainMenuController : MonoBehaviour
+public class ScreensController : MonoBehaviour
 {
     public GameObject MainScreen;
     public GameObject optionsMenu;
     public GameObject optionsMenuInGame;
     public float timeAlpha;
+    [SerializeField]
+    TextMeshProUGUI warningText;
+    [SerializeField]
+    TextMeshProUGUI timerText;
+    [SerializeField]
+    TextMeshProUGUI pointsText;
 
     private void Start()
     {
@@ -35,7 +42,15 @@ public class MainMenuController : MonoBehaviour
                 BackButton();
             }
         }
-        
+        if (GameManager.Instance.estaDetectando)
+        {
+            warningText.text = "Detectado";
+        }
+        if (GameManager.Instance.estaDetectando == false)
+        {
+            warningText.text = "Sigilo";
+        }
+
     }
     public void PlayGame()
     {
