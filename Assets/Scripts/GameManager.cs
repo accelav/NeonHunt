@@ -7,17 +7,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public bool partidaEmpezada;
-    public bool partidaPausada;
-    public bool configurando;
-    public bool restarting;
-    public bool estaContando;
+    public bool partidaEmpezada = false;
+    public bool partidaPausada = false;
+    public bool configurando = false;
+    public bool restarting = false;
+    public bool estaContando = false;
     public bool startButton = false;
     public bool estaDetectando = false;
     public bool estaMuerto = false;
 
     public float timer;
-
+    public int puntosTotales;
+    public int puntosIniciales;
 
     private void Awake()
     {
@@ -32,22 +33,13 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        partidaPausada = true;
         startButton = false;
+        
     }
 
     private void Update()
     {
-
-        if (estaContando)
-        {
-            timer = Time.deltaTime;
-        }
-
-        else
-        {
-            timer += 0;
-        }
+        
 
     }
     public void EmpezarPartida()
@@ -62,9 +54,9 @@ public class GameManager : MonoBehaviour
     public void PausarPartida()
     {
         partidaPausada = !partidaPausada;
+
         if (partidaPausada)
         {
-            partidaEmpezada = false;
             TimerOff();
             Time.timeScale = 0.0f;
         }
@@ -90,6 +82,7 @@ public class GameManager : MonoBehaviour
         restarting = true;
         startButton = false;
         timer = 0.0f;
+        ResetPuntos();
         SceneManager.LoadScene("GameScene");
 
     }
@@ -102,4 +95,17 @@ public class GameManager : MonoBehaviour
         estaContando = false;
     }
 
+    public void OtorgarPuntos(int puntos)
+    {
+        puntosTotales += puntos;
+    }
+
+    public void ResetPuntos()
+    {
+        puntosTotales = 0;
+    }
+    void PuntosRecord()
+    {
+        PlayerPrefs.Save();
+    }
 }

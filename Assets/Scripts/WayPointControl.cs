@@ -24,6 +24,7 @@ public class WaypointPatrol : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.partidaPausada == true) return;
         currentPlayerPosition = playerController.transform.position;
         
 

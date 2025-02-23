@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField]
+    int puntosAlMorir = 2;
     void Start()
     {
 
@@ -26,6 +27,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.gameObject.tag == "Bullet") Destroy(gameObject);
+        if (collision.collider.gameObject.tag == "Bullet")
+        {
+            GameManager.Instance.OtorgarPuntos(puntosAlMorir);
+            Destroy(gameObject);
+        }
     }
 }

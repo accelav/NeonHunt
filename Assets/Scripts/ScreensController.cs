@@ -7,8 +7,6 @@ using TMPro;
 
 public class ScreensController : MonoBehaviour
 {
-    public GameObject MainScreen;
-    public GameObject optionsMenu;
     public GameObject optionsMenuInGame;
     public float timeAlpha;
     [SerializeField]
@@ -17,31 +15,16 @@ public class ScreensController : MonoBehaviour
     TextMeshProUGUI timerText;
     [SerializeField]
     TextMeshProUGUI pointsText;
+    float timeRemaining = 420f;
 
     private void Start()
     {
-        optionsMenu.SetActive(false);
         optionsMenuInGame.SetActive(false);
-        LeanTween.alpha(optionsMenu, 0f, 0f);
-
+        GameManager.Instance.estaContando = true;
     }
 
     private void Update()
     {
-        if (GameManager.Instance.partidaEmpezada)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                OpenOptionsInGame();
-            }
-        }
-        if (GameManager.Instance.partidaEmpezada == false)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                BackButton();
-            }
-        }
         if (GameManager.Instance.estaDetectando)
         {
             warningText.text = "Detectado";
@@ -51,21 +34,31 @@ public class ScreensController : MonoBehaviour
             warningText.text = "Sigilo";
         }
 
+        if (GameManager.Instance.estaContando)
+        {
+            if (timeRemaining > 0)
+            {
+                timeRemaining -= Time.deltaTime;
+                DisplayTime(timeRemaining);
+            }
+
+        }
+    }
+
+    void DisplayTime(float timeToDisplay)
+    {
+        // Se puede ajustar sumando 1 segundo para mostrar de forma intuitiva el tiempo
+        timeToDisplay += 1;
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
     public void PlayGame()
     {
-        LeanTween.alpha(MainScreen, 0, timeAlpha).setOnComplete(() => { MainScreen.SetActive(false); });
+
         GameManager.Instance.EmpezarPartida();
     }
 
-    // Método para botón 'Options'
-    public void OpenOptions()
-    {
-        GameManager.Instance.PausarPartida();
-        optionsMenu.SetActive(true);
-        LeanTween.alpha(optionsMenu, 1f, timeAlpha);
-
-    }
     public void OpenOptionsInGame()
     {
         GameManager.Instance.PausarPartida();
@@ -77,13 +70,11 @@ public class ScreensController : MonoBehaviour
     public void BackButton()
     {
         GameManager.Instance.PausarPartida();
-        LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenu.SetActive(false); });
-        LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenuInGame.SetActive(false); });
+        LeanTween.alpha(optionsMenuInGame, 0f, timeAlpha).setOnComplete(() => { optionsMenuInGame.SetActive(false); });
     }
     public void Restart()
     {
         GameManager.Instance.ReempezarPartida();
-        LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenu.SetActive(false); });
     }
 
     // Método para botón 'Salir'

@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     // Variables de entrada (Nuevo Input System)
     [SerializeField]
     private Vector2 moveInput;           // W/S/A/D
+    [SerializeField]
     private Vector2 lookInput;           // Ratón
 
     // Rotaciones internas
@@ -76,6 +77,7 @@ public class PlayerController : MonoBehaviour
     void OnLook(InputValue value)
     {
         lookInput = value.Get<Vector2>();
+        Debug.Log(lookInput);
     }
 
     // ------------------------------
