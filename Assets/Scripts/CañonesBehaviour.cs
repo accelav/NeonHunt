@@ -12,6 +12,7 @@ public class CañonesBehaviour : MonoBehaviour
     private CrosshairBehaviour crosshair;  // Referencia al script CrosshairBehaviour
     public Vector3 targetPosition;
     Bullet Bullet;
+    bool esperarParaDisparar;
     [SerializeField]
     int puntosAlDisparar = -2;
     void Awake()
@@ -24,11 +25,12 @@ public class CañonesBehaviour : MonoBehaviour
     void OnClick(InputValue value)
     {
         if (GameManager.Instance.partidaPausada == true) return;
+
         if (value.isPressed && Time.time >= nextFireTime)
         {
             GameManager.Instance.OtorgarPuntos(puntosAlDisparar);
             animator.SetTrigger("Disparo");
-            
+
 
             // Si hay un enemigo detectado
             if (crosshair != null && crosshair.enemigoDetectado)
@@ -59,5 +61,10 @@ public class CañonesBehaviour : MonoBehaviour
 
             nextFireTime = Time.time + fireRate;
         }
+    }
+    private void Update()
+    {
+        GameManager.Instance.esperarParDisparar = Time.time < nextFireTime;
+
     }
 }

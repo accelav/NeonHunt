@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public int puntosTotales;
     public int puntosIniciales;
 
+    public bool esperarParDisparar = false;
     private void Awake()
     {
         if (Instance == null)

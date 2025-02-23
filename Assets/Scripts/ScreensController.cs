@@ -33,6 +33,10 @@ public class ScreensController : MonoBehaviour
         {
             warningText.text = "Sigilo";
         }
+        if (GameManager.Instance.esperarParDisparar)
+        {
+            warningText.text = "Recargando";
+        }
 
         if (GameManager.Instance.estaContando)
         {
