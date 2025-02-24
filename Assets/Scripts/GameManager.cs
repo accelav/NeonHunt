@@ -19,8 +19,9 @@ public class GameManager : MonoBehaviour
     public float timer;
     public int puntosTotales;
     public int puntosIniciales;
-
+    public int enemigosTotales;
     public bool esperarParDisparar = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -28,54 +29,77 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-
         else
         {
             Destroy(gameObject);
+            return;
         }
 
+        // Si quieres que desde el principio esté el cursor bloqueado:
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+
+        // Por si acaso
         startButton = false;
-        
     }
 
     private void Update()
     {
-        
+        // Cada vez que se pulse Escape, se alterna la pausa
+        /*if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            PausarPartida();
+        }*/
+        /*if (enemigosTotales == 0)
+        {
+            estaMuerto = true;
+        }*/
 
     }
+
     public void EmpezarPartida()
     {
         partidaEmpezada = true;
         partidaPausada = false;
+        startButton = true;
+
+        // Activa el timer y reanuda el tiempo
         TimerOn();
         Time.timeScale = 1.0f;
-        startButton = true;
+
+        // Bloquea y oculta el cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void PausarPartida()
     {
+        // Alternamos el estado de pausa
         partidaPausada = !partidaPausada;
 
         if (partidaPausada)
         {
+            // Si está pausado, se detiene el tiempo y el contador
             TimerOff();
             Time.timeScale = 0.0f;
+
+            // Desbloquear y mostrar cursor
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
-        if (partidaPausada && startButton == false)
+        else
         {
-            Time.timeScale = 1.0f;
-            if (Time.timeScale > 0.0f)
+            // Si se reanuda y la partida había empezado
+            if (partidaEmpezada)
             {
-                partidaPausada = true;
+                TimerOn();
+                Time.timeScale = 1.0f;
+
+                // Bloquear y ocultar cursor
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
-
         }
-
-        if (partidaPausada == false && startButton == true)
-        {
-            EmpezarPartida();
-        }
-
     }
 
     public void ReempezarPartida()
@@ -84,13 +108,16 @@ public class GameManager : MonoBehaviour
         startButton = false;
         timer = 0.0f;
         ResetPuntos();
+        estaMuerto = false;
+        // Carga la escena de nuevo
         SceneManager.LoadScene("GameScene");
-
     }
+
     public void TimerOn()
     {
         estaContando = true;
     }
+
     public void TimerOff()
     {
         estaContando = false;
@@ -105,8 +132,14 @@ public class GameManager : MonoBehaviour
     {
         puntosTotales = 0;
     }
+
     void PuntosRecord()
     {
         PlayerPrefs.Save();
+    }
+
+    public void EnemiesCounter(int enemigos)
+    {
+        enemigosTotales += enemigos;
     }
 }

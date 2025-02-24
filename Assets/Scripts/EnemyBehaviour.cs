@@ -10,6 +10,7 @@ public class EnemyBehaviour : MonoBehaviour
     void Start()
     {
         haChocado = false;
+        GameManager.Instance.EnemiesCounter(1);
     }
 
     // Update is called once per frame
@@ -24,8 +25,9 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (collision.collider.gameObject.tag == "Bullet")
         {
-            
+
             GameManager.Instance.OtorgarPuntos(puntosAlMorir);
+            GameManager.Instance.EnemiesCounter(-1);
             Destroy(gameObject);
         }
     }

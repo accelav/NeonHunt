@@ -1,8 +1,10 @@
+using StarterAssets;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CañonesBehaviour : MonoBehaviour
 {
+    StarterAssetsInputs starterInput;
     private Animator animator;
     public Transform firePoint;
     public float fireRate = 0.5f;
@@ -15,18 +17,26 @@ public class CañonesBehaviour : MonoBehaviour
     bool esperarParaDisparar;
     [SerializeField]
     int puntosAlDisparar = -2;
+
     void Awake()
     {
         animator = GetComponent<Animator>();
         crosshair = FindObjectOfType<CrosshairBehaviour>();  // Encontrar el script de crosshair
         Bullet = GetComponent<Bullet>();
+        starterInput = FindAnyObjectByType<StarterAssetsInputs>();
+    }
+    private void Update()
+    {
+        GameManager.Instance.esperarParDisparar = Time.time < nextFireTime;
+        FireTrigger();
+        starterInput.fire = false;
     }
 
-    void OnClick(InputValue value)
+    void FireTrigger()
     {
         if (GameManager.Instance.partidaPausada == true) return;
 
-        if (value.isPressed && Time.time >= nextFireTime)
+        if (starterInput.fire && Time.time >= nextFireTime)
         {
             GameManager.Instance.OtorgarPuntos(puntosAlDisparar);
             animator.SetTrigger("Disparo");
@@ -43,9 +53,9 @@ public class CañonesBehaviour : MonoBehaviour
                 enemigoTransform = crosshair.enemigoDetectadoObj.parent;  // Obtenemos el transform del padre
 
                 // Disparo hacia el enemigo
-                Vector3 shootDirection = -transform.up;//(enemigoTransform.position - firePoint.position).normalized;
+                Vector3 shootDirection = -transform.up;
                 bullet.GetComponent<Bullet>().Initialize(shootDirection, enemigoTransform);
-
+                starterInput.fire = false;
             }
             else
             {
@@ -54,17 +64,14 @@ public class CañonesBehaviour : MonoBehaviour
                 bullet.transform.position = firePoint.position;
 
                 // Disparo hacia el enemigo
-                Vector3 shootDirection = -transform.up;//(enemigoTransform.position - firePoint.position).normalized;
+                Vector3 shootDirection = -transform.up;
                 bullet.GetComponent<Bullet>().Initialize(shootDirection, null);
-
+                starterInput.fire = false;
             }
 
             nextFireTime = Time.time + fireRate;
+            
         }
     }
-    private void Update()
-    {
-        GameManager.Instance.esperarParDisparar = Time.time < nextFireTime;
-
-    }
+  
 }

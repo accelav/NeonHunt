@@ -1,10 +1,13 @@
 
+using StarterAssets;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
+
 {
+    StarterAssetsInputs starterInput;
     [Header("Camera References")]
     public Transform cameraTransform;     // Cámara, hija del jugador
 
@@ -27,11 +30,11 @@ public class PlayerController : MonoBehaviour
     [Header("Animations")]
 
     Animator animator;
-    // Variables de entrada (Nuevo Input System)
+   /* // Variables de entrada (Nuevo Input System)
     [SerializeField]
     private Vector2 moveInput;           // W/S/A/D
     [SerializeField]
-    private Vector2 lookInput;           // Ratón
+    private Vector2 lookInput;           // Ratón*/
 
     // Rotaciones internas
     private float cameraYaw;  // “Yaw de la cámara” (suma ratón + A/D)
@@ -52,8 +55,13 @@ public class PlayerController : MonoBehaviour
     private float currentTiltZ = 0f;
     public float smoothSpeed = 10f; // Ajusta este valor para controlar la velocidad de la transición
 
+    public bool estaDisparando = false;
+
+
+
     void Awake()
     {
+        starterInput = GetComponent<StarterAssetsInputs>();
         rb = GetComponent<Rigidbody>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         animator = GetComponent<Animator>();
@@ -68,7 +76,7 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     // NUEVO INPUT SYSTEM: CALLBACKS
     // ------------------------------
-    void OnMove(InputValue value)
+    /*void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
         Debug.Log("moveInput " + moveInput);
@@ -78,17 +86,19 @@ public class PlayerController : MonoBehaviour
     {
         lookInput = value.Get<Vector2>();
         Debug.Log(lookInput);
-    }
+    }*/
 
     // ------------------------------
     // UNITY LOOP
     // ------------------------------
     void Update()
     {
+        
         HandleMouseLook();
         HandleKeyRotationContinuous();
         SmoothRotatePlayer();
         CheckGround();
+
     }
 
     void FixedUpdate()
@@ -101,8 +111,8 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     private void HandleMouseLook()
     {
-        float mouseX = lookInput.x * mouseSensitivity;
-        float mouseY = lookInput.y * mouseSensitivity;
+        float mouseX = starterInput.look.x * mouseSensitivity;
+        float mouseY = -starterInput.look.y * mouseSensitivity;
 
         cameraYaw += mouseX;
 
@@ -117,7 +127,7 @@ public class PlayerController : MonoBehaviour
     {
         // moveInput.x -> A/D
         // Si es > 0, rotar a la derecha; si < 0, rotar a la izquierda
-        float horizontal = moveInput.x;
+        float horizontal = starterInput.move.x;
 
         // Añadir rotación (en grados/segundo) al cameraYaw
         // Mientras más tiempo esté pulsado, más gira
@@ -154,7 +164,7 @@ public class PlayerController : MonoBehaviour
 
         // Calcula la velocidad horizontal actual y la deseada (sin la componente Y)
         Vector3 currentHorizontal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        Vector3 targetHorizontal = camForward * moveInput.y * speed;
+        Vector3 targetHorizontal = camForward * starterInput.move.y * speed;
 
         // Suaviza solo las componentes horizontales
         Vector3 newHorizontal = Vector3.Lerp(currentHorizontal, targetHorizontal, acceleration * Time.fixedDeltaTime);
@@ -163,8 +173,8 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(newHorizontal.x, rb.velocity.y, newHorizontal.z);
 
         // Define los valores objetivo a partir del input
-        float targetTiltX = -moveInput.y; // O cualquier factor que necesites
-        float targetTiltZ = moveInput.x;
+        float targetTiltX = -starterInput.move.y; // O cualquier factor que necesites
+        float targetTiltZ = starterInput.move.x;
 
         // Interpola suavemente desde el valor actual al objetivo
         currentTiltX = Mathf.Lerp(currentTiltX, targetTiltX, smoothSpeed * Time.deltaTime);

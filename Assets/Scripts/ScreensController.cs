@@ -15,27 +15,35 @@ public class ScreensController : MonoBehaviour
     TextMeshProUGUI timerText;
     [SerializeField]
     TextMeshProUGUI pointsText;
+    [SerializeField]
+    GameObject dieScreen;
     float timeRemaining = 420f;
+    bool estaPausada;
 
     private void Start()
     {
         optionsMenuInGame.SetActive(false);
         GameManager.Instance.estaContando = true;
+        
     }
 
     private void Update()
     {
-        if (GameManager.Instance.estaDetectando)
-        {
-            warningText.text = "Detectado";
-        }
-        if (GameManager.Instance.estaDetectando == false)
-        {
-            warningText.text = "Sigilo";
-        }
         if (GameManager.Instance.esperarParDisparar)
         {
+            // Prioridad 1: Recargando
             warningText.text = "Recargando";
+        }
+        else if (GameManager.Instance.estaDetectando)
+        {
+            // Prioridad 2: Detectado
+            warningText.text = "Detectado";
+            Debug.Log("Player Detectado");
+        }
+        else
+        {
+            // Prioridad 3: Sigilo (por descarte)
+            warningText.text = "Sigilo";
         }
 
         if (GameManager.Instance.estaContando)
@@ -47,6 +55,29 @@ public class ScreensController : MonoBehaviour
             }
 
         }
+
+        if (GameManager.Instance.estaMuerto)
+        {
+            dieScreen.SetActive(true);
+        }
+        else
+        {
+            dieScreen.SetActive(false);
+        }
+
+        pointsText.text = GameManager.Instance.puntosTotales.ToString();
+
+        estaPausada = GameManager.Instance.partidaPausada;
+        if (!estaPausada)
+        {
+            optionsMenuInGame.SetActive(false);
+        }
+        else
+        {
+            optionsMenuInGame.SetActive(true);
+            LeanTween.alpha(optionsMenuInGame, 1f, timeAlpha);
+        }
+
     }
 
     void DisplayTime(float timeToDisplay)
@@ -59,13 +90,12 @@ public class ScreensController : MonoBehaviour
     }
     public void PlayGame()
     {
-
-        GameManager.Instance.EmpezarPartida();
+        
     }
 
     public void OpenOptionsInGame()
     {
-        GameManager.Instance.PausarPartida();
+        
         optionsMenuInGame.SetActive(true);
         LeanTween.alpha(optionsMenuInGame, 1f, timeAlpha);
 
@@ -73,8 +103,7 @@ public class ScreensController : MonoBehaviour
 
     public void BackButton()
     {
-        GameManager.Instance.PausarPartida();
-        LeanTween.alpha(optionsMenuInGame, 0f, timeAlpha).setOnComplete(() => { optionsMenuInGame.SetActive(false); });
+
     }
     public void Restart()
     {

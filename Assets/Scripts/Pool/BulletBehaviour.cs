@@ -30,6 +30,7 @@ public class Bullet : MonoBehaviour
         if (target == null)
         {
             rb.velocity = initialDirection * initialSpeed;
+            transform.forward = rb.velocity.normalized;
         }
 
         else

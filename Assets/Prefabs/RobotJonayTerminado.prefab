@@ -267,6 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47505c646bea3054dad188f6da6b14ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  puntosAlMorir: 2
 --- !u!114 &3395587081481877497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,7 +280,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74014172cd4860743862de36493fecc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sphereCastRadius: 20
+  sphereCastRadius: 30
   maxRayDistance: 0.1
 --- !u!114 &4299279844918150449
 MonoBehaviour:

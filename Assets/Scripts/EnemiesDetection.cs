@@ -17,24 +17,20 @@ public class EnemyDetection : MonoBehaviour
     private void Update()
     {
 
-        RaycastHit[] hits = Physics.SphereCastAll(
-            transform.position,
-            sphereCastRadius,
-            transform.forward,
-            maxRayDistance);
+        Collider[] hits = Physics.OverlapSphere(transform.position, sphereCastRadius);
+
         waypointPatrol.followPlayer = false;
         GameManager.Instance.estaDetectando = false;
-        foreach (RaycastHit hit in hits)
+
+        foreach (Collider col in hits)
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
+            if (col.CompareTag("Player"))
             {
-                Debug.Log("Player Detectado");
+                
                 waypointPatrol.followPlayer = true;
                 GameManager.Instance.estaDetectando = true;
             }
-
         }
-
     }
 
     private void OnDrawGizmos()
