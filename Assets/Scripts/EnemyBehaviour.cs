@@ -28,7 +28,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (collision.collider.gameObject.tag == "Bullet")
         {
-
+            SoundsBehaviour.instance.PlayExplosionTwo();
             GameManager.Instance.OtorgarPuntos(puntosAlMorir);
             GameManager.Instance.EnemiesCounter(-1);
             Destroy(gameObject);

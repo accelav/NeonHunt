@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
     public bool estaDisparando = false;
 
-
+    PlayerSoundsController soundController;
 
     void Awake()
     {
@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
         playerYaw = cameraYaw;
         pitch = cameraTransform.localEulerAngles.x;
         animator = GetComponent<Animator>();
+        soundController = GetComponent<PlayerSoundsController>();
     }
 
     // ------------------------------
@@ -187,6 +188,7 @@ public class PlayerController : MonoBehaviour
         currentTiltX = Mathf.Lerp(currentTiltX, targetTiltX, smoothSpeed * Time.deltaTime);
         currentTiltZ = Mathf.Lerp(currentTiltZ, targetTiltZ, smoothSpeed * Time.deltaTime);
 
+        soundController.PitchSound(-currentTiltX * 1.5f);
         // Envía los valores al Animator
         animator.SetFloat("TiltX", currentTiltX);
         animator.SetFloat("TiltZ", currentTiltZ);
@@ -212,6 +214,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGround()
     {
+
         Vector3 posicion = new Vector3(transform.position.x, transform.position.y - offsetGrounded, transform.position.z);
         rayGrounded = Physics.CheckSphere(posicion, 0.3f , layerMask , QueryTriggerInteraction.Ignore);
       

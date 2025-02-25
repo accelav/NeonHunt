@@ -20,6 +20,7 @@ public class Bullet : MonoBehaviour
 
     public void Initialize(Vector3 shootDirection, Transform enemyTarget)
     {
+        SoundsBehaviour.instance.PlayShootSound();
         target = enemyTarget;
         initialDirection = shootDirection.normalized; // Guardamos la dirección inicial
         rb.velocity = initialDirection * initialSpeed; // Disparo con velocidad inicial
@@ -68,6 +69,8 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+  
+        SoundsBehaviour.instance.PlayExplosion();
         Vector3 posicion = gameObject.transform.position;
         GameObject particulas = Instantiate(particles,new Vector3(posicion.x, posicion.y, posicion.z), Quaternion.identity);
         ReturnToPool();

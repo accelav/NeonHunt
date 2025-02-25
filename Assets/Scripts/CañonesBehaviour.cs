@@ -79,6 +79,10 @@ public class CañonesBehaviour : MonoBehaviour
             nextFireTime = Time.time + fireRate;
             
         }
+        if (starterInput.fire && Time.time < nextFireTime)
+        {
+            SoundsBehaviour.instance.PlayRecargaSound();
+        }
     }
   
 }

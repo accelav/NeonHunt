@@ -25,6 +25,7 @@ public class MainMenuController : MonoBehaviour
     }
     public void PlayGame()
     {
+        SoundsBehaviour.instance.PlayButtonSound();
         LeanTween.alpha(MainScreen, 0, timeAlpha).setOnComplete(() => { MainScreen.SetActive(false); });
         GameManager.Instance.EmpezarPartida();
         SceneManager.LoadScene("GameScene");
@@ -33,7 +34,7 @@ public class MainMenuController : MonoBehaviour
     // Método para botón 'Options'
     public void OpenOptions()
     {
-
+        SoundsBehaviour.instance.PlayButtonSound();
         optionsMenu.SetActive(true);
         LeanTween.alpha(optionsMenu, 1f, timeAlpha);
 
@@ -41,11 +42,12 @@ public class MainMenuController : MonoBehaviour
 
     public void BackButton()
     {
-
+        SoundsBehaviour.instance.PlayButtonSoundTwo();
         LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenu.SetActive(false); });
     }
     public void Restart()
     {
+        SoundsBehaviour.instance.PlayButtonSoundTres();
         GameManager.Instance.ReempezarPartida();
         LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenu.SetActive(false); });
     }
@@ -53,6 +55,7 @@ public class MainMenuController : MonoBehaviour
     // Método para botón 'Salir'
     public void QuitGame()
     {
+        SoundsBehaviour.instance.PlayButtonSoundTres();
         Debug.Log("Saliendo del juego...");
         Application.Quit();
 

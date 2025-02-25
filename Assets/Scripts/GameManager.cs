@@ -15,12 +15,17 @@ public class GameManager : MonoBehaviour
     public bool startButton = false;
     public bool estaDetectando = false;
     public bool estaMuerto = false;
+    public bool hasGanado = false;
 
     public float timer;
     public int puntosTotales;
     public int puntosIniciales;
     public int enemigosTotales;
+    public int enemigosActuales;
     public bool esperarParDisparar = false;
+
+    // -- NUEVO: Variable para guardar el récord --
+    public int bestScore = 0;
 
     private void Awake()
     {
@@ -28,6 +33,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // -- NUEVO: Cargamos el récord al iniciar --
+            bestScore = PlayerPrefs.GetInt("bestScore", 0);
         }
         else
         {
@@ -35,15 +43,27 @@ public class GameManager : MonoBehaviour
             return;
         }
         startButton = false;
+        timer = 420f;
     }
 
     private void Update()
     {
+        enemigosActuales = enemigosTotales;
+
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             TogglePauseGame();
         }
 
+        if (enemigosActuales <= 0 && !hasGanado)
+        {
+            PartidaGanada();
+            hasGanado = true; // Para evitar llamar a PartidaGanada repetidamente
+        }
+        else if (enemigosActuales > 0)
+        {
+            timer -= Time.deltaTime;
+        }
     }
 
     private void UnlockCursor()
@@ -68,7 +88,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         LockCursor();
     }
-
 
     public void TogglePauseGame()
     {
@@ -100,6 +119,15 @@ public class GameManager : MonoBehaviour
         UnlockCursor();
     }
 
+    public void PartidaGanada()
+    {
+        hasGanado = true;
+        UnlockCursor();
+        TimerOff();
+        int bonus = (int)timer * 10;
+        OtorgarPuntos(bonus);
+    }
+
     public void ReempezarPartida()
     {
         ResumeGame(); // Reanuda el juego antes de recargar la escena
@@ -111,6 +139,7 @@ public class GameManager : MonoBehaviour
         ResetPuntos();
         SceneManager.LoadScene("GameScene");
     }
+
     public void VolverAlMenu()
     {
         ResumeGame(); // Reanuda el juego antes de recargar la escena
@@ -136,6 +165,14 @@ public class GameManager : MonoBehaviour
     public void OtorgarPuntos(int puntos)
     {
         puntosTotales += puntos;
+
+        // -- NUEVO: Actualizamos el récord si se supera
+        if (puntosTotales > bestScore)
+        {
+            bestScore = puntosTotales;
+            PlayerPrefs.SetInt("bestScore", bestScore);
+            PlayerPrefs.Save();
+        }
     }
 
     public void ResetPuntos()
