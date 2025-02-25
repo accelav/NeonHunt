@@ -6,11 +6,14 @@ public class EnemyBehaviour : MonoBehaviour
 {
     [SerializeField]
     int puntosAlMorir = 2;
-    bool haChocado;
+
+    WaypointPatrol waypointPatrol;
+    
     void Start()
     {
-        haChocado = false;
+        
         GameManager.Instance.EnemiesCounter(1);
+        waypointPatrol = GetComponent<WaypointPatrol>();
     }
 
     // Update is called once per frame
@@ -30,6 +33,7 @@ public class EnemyBehaviour : MonoBehaviour
             GameManager.Instance.EnemiesCounter(-1);
             Destroy(gameObject);
         }
+
     }
 
 }

@@ -8,11 +8,14 @@ public class Bullet : MonoBehaviour
     private Transform target;         // Enemigo al que se dirige
     private Vector3 initialDirection; // Dirección inicial de disparo
     private float timeSinceShot = 0f; // Tiempo desde que se disparó
-
+    public BulletPool pool;
+    float timer = 5f;
+    public GameObject particles;
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;  // Desactivamos la gravedad
+        
     }
 
     public void Initialize(Vector3 shootDirection, Transform enemyTarget)
@@ -25,7 +28,15 @@ public class Bullet : MonoBehaviour
 
     void FixedUpdate()
     {
-        timeSinceShot += Time.fixedDeltaTime;
+        
+        timer -= Time.deltaTime;
+        if (timer < 0)
+        {
+            timer = 5f;
+            pool.ReturnToPool(gameObject);
+        }
+    
+    timeSinceShot += Time.fixedDeltaTime;
 
         if (target == null)
         {
@@ -55,8 +66,15 @@ public class Bullet : MonoBehaviour
         
     }
 
-        private void OnCollisionEnter(Collision collision)
-            {
-                Destroy(gameObject);
-            }
+    private void OnCollisionEnter(Collision collision)
+    {
+        Vector3 posicion = gameObject.transform.position;
+        GameObject particulas = Instantiate(particles,new Vector3(posicion.x, posicion.y, posicion.z), Quaternion.identity);
+        ReturnToPool();
+    }
+
+    void ReturnToPool()
+    {
+        pool.ReturnToPool(gameObject);
+    }
 }

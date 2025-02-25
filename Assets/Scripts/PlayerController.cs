@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     void Update()
     {
-        if (GameManager.Instance.partidaPausada)
+        if (GameManager.Instance.partidaPausada || GameManager.Instance.estaMuerto)
         {
 
         }

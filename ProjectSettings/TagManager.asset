@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - EnemyParent
   - Bullet
+  - Pared
   layers:
   - Default
   - TransparentFX

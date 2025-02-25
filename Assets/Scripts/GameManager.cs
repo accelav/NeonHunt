@@ -44,10 +44,6 @@ public class GameManager : MonoBehaviour
             TogglePauseGame();
         }
 
-        if (estaMuerto)
-        {
-            Time.timeScale = 0.0f;
-        }
     }
 
     private void UnlockCursor()
@@ -111,6 +107,7 @@ public class GameManager : MonoBehaviour
         estaMuerto = false;
         startButton = false;
         timer = 0f;
+        enemigosTotales = 0;
         ResetPuntos();
         SceneManager.LoadScene("GameScene");
     }
@@ -121,9 +118,9 @@ public class GameManager : MonoBehaviour
         estaMuerto = false;
         startButton = false;
         ResetPuntos();
-        UnlockCursor();
-            
+        enemigosTotales = 0;
         SceneManager.LoadScene("MainMenu");
+        UnlockCursor();
     }
 
     public void TimerOn()

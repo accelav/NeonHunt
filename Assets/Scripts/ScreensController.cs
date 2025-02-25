@@ -11,6 +11,7 @@ public class ScreensController : MonoBehaviour
     public float timeAlpha;
     [SerializeField] TextMeshProUGUI warningText;
     [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] TextMeshProUGUI enemiesText;
     [SerializeField] TextMeshProUGUI pointsText;
     [SerializeField] GameObject dieScreen;
 
@@ -42,6 +43,7 @@ public class ScreensController : MonoBehaviour
         }
 
         dieScreen.SetActive(GameManager.Instance.estaMuerto);
+        enemiesText.text = GameManager.Instance.enemigosTotales.ToString() + " Enemigos";
         pointsText.text = GameManager.Instance.puntosTotales.ToString();
 
         estaPausada = GameManager.Instance.partidaPausada;
@@ -52,6 +54,8 @@ public class ScreensController : MonoBehaviour
             optionsMenuInGame.SetActive(true);
             //LeanTween.alpha(optionsMenuInGame, 1f, timeAlpha);
         }
+
+
     }
 
     void DisplayTime(float timeToDisplay)

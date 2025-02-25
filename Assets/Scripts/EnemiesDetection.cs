@@ -5,7 +5,6 @@ public class EnemyDetection : MonoBehaviour
     [SerializeField]
     float sphereCastRadius = 10f;
     [SerializeField]
-    float maxRayDistance = 0;
     WaypointPatrol waypointPatrol;
     PlayerController playerController;
     

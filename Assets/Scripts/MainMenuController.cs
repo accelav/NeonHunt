@@ -20,20 +20,7 @@ public class MainMenuController : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.partidaEmpezada)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                OpenOptionsInGame();
-            }
-        }
-        if (GameManager.Instance.partidaEmpezada == false)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                BackButton();
-            }
-        }
+
 
     }
     public void PlayGame()
@@ -46,20 +33,15 @@ public class MainMenuController : MonoBehaviour
     // Método para botón 'Options'
     public void OpenOptions()
     {
-        GameManager.Instance.TogglePauseGame();
+
         optionsMenu.SetActive(true);
         LeanTween.alpha(optionsMenu, 1f, timeAlpha);
-
-    }
-    public void OpenOptionsInGame()
-    {
-        GameManager.Instance.TogglePauseGame();
 
     }
 
     public void BackButton()
     {
-        GameManager.Instance.TogglePauseGame();
+
         LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenu.SetActive(false); });
     }
     public void Restart()

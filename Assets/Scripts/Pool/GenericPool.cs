@@ -3,53 +3,46 @@ using UnityEngine;
 
 public class BulletPool : MonoBehaviour
 {
-    public static BulletPool Instance { get; private set; }
-
-    public GameObject bulletPrefab;
-    public int poolSize = 10;
-
-    private Queue<GameObject> bulletPool = new Queue<GameObject>();
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    private void Start()
+    [SerializeField]
+    GameObject bulletPrefab;
+    Stack<GameObject> _pool = new Stack<GameObject>();
+    [SerializeField]
+    int poolSize;
+    void Start()
     {
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject bullet = Instantiate(bulletPrefab);
-            bullet.SetActive(false);
-            bulletPool.Enqueue(bullet);
+            CreateElement();
         }
     }
-
-    public GameObject GetBullet()
+    GameObject CreateElement()
     {
-        if (bulletPool.Count > 0)
+        GameObject temporalElement = Instantiate(bulletPrefab, Vector3.zero, Quaternion.identity);
+        temporalElement.GetComponent<Bullet>().pool = this;
+        _pool.Push(temporalElement);
+        temporalElement.SetActive(false);
+        return temporalElement;
+    }
+
+    public GameObject GetElementFromPool()
+    {
+        GameObject toReturn = null;
+        if (_pool.Count == 0)
         {
-            GameObject bullet = bulletPool.Dequeue();
-            bullet.SetActive(true);
-            return bullet;
+            toReturn = Instantiate(bulletPrefab, Vector3.zero, Quaternion.identity);
+            toReturn.SetActive(false);
         }
         else
         {
-            GameObject bullet = Instantiate(bulletPrefab);
-            return bullet;
+            toReturn = _pool.Pop();
         }
+        return toReturn;
     }
 
-    public void ReturnBullet(GameObject bullet)
+    public void ReturnToPool(GameObject element)
     {
-        bullet.SetActive(false);
-        bulletPool.Enqueue(bullet);
+        element.SetActive(false);
+        _pool.Push(element);
     }
+
 }

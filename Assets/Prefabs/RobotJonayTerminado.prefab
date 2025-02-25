@@ -254,7 +254,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navMeshAgent: {fileID: 4667195699265786318}
   waypoints: []
+  m_CurrentWaypointIndex: 0
+  currentPlayerPosition: {x: 0, y: 0, z: 0}
+  realWaypoint: {x: 0, y: 0, z: 0}
   followPlayer: 0
+  haChocado: 0
 --- !u!114 &546510990781660630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,7 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sphereCastRadius: 30
-  maxRayDistance: 0.1
+  waypointPatrol: {fileID: 0}
 --- !u!114 &4299279844918150449
 MonoBehaviour:
   m_ObjectHideFlags: 0

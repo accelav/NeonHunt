@@ -18,11 +18,14 @@ public class CañonesBehaviour : MonoBehaviour
     [SerializeField]
     int puntosAlDisparar = -2;
 
+    public BulletPool pool;
+
     void Awake()
     {
         animator = GetComponent<Animator>();
         crosshair = FindObjectOfType<CrosshairBehaviour>();  // Encontrar el script de crosshair
         Bullet = GetComponent<Bullet>();
+        //pool = GetComponent<BulletPool>();
         starterInput = FindAnyObjectByType<StarterAssetsInputs>();
     }
     private void Update()
@@ -30,6 +33,7 @@ public class CañonesBehaviour : MonoBehaviour
         GameManager.Instance.esperarParDisparar = Time.time < nextFireTime;
         FireTrigger();
         starterInput.fire = false;
+
     }
 
     void FireTrigger()
@@ -46,7 +50,8 @@ public class CañonesBehaviour : MonoBehaviour
             if (crosshair != null && crosshair.enemigoDetectado)
             {
                 // Disparamos hacia el enemigo
-                GameObject bullet = BulletPool.Instance.GetBullet();
+                GameObject bullet = pool.GetElementFromPool();
+                bullet.SetActive(true);
                 bullet.transform.position = firePoint.position;
 
                 // Usamos el Transform del padre del enemigo detectado
@@ -60,11 +65,13 @@ public class CañonesBehaviour : MonoBehaviour
             else
             {
                 // Si no hay enemigo, disparar en línea recta
-                GameObject bullet = BulletPool.Instance.GetBullet();
+                GameObject bullet = pool.GetElementFromPool();
+                bullet.SetActive(true);
                 bullet.transform.position = firePoint.position;
 
                 // Disparo hacia el enemigo
                 Vector3 shootDirection = -transform.up;
+
                 bullet.GetComponent<Bullet>().Initialize(shootDirection, null);
                 starterInput.fire = false;
             }
