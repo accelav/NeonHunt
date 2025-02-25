@@ -24,27 +24,29 @@ public class WaypointPatrol : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance.partidaPausada == true) return;
-        currentPlayerPosition = playerController.transform.position;
-        
-
-        if (followPlayer)
+        if (GameManager.Instance.partidaPausada)
         {
-            waypoints[2].position = currentPlayerPosition;
-            navMeshAgent.SetDestination(waypoints[2].position);
-        }
 
+        }
         else
         {
-            waypoints[1].position = realWaypoint;
-            if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
-        {
-            m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
-            navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
+            // Código normal cuando la partida no está pausada
+            currentPlayerPosition = playerController.transform.position;
+
+            if (followPlayer)
+            {
+                waypoints[2].position = currentPlayerPosition;
+                navMeshAgent.SetDestination(waypoints[2].position);
+            }
+            else
+            {
+                waypoints[1].position = realWaypoint;
+                if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+                {
+                    m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
+                    navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
+                }
+            }
         }
-        }
-
-
-
     }
 }

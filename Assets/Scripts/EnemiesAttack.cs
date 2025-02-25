@@ -27,7 +27,7 @@ public class EnemiesAttack : MonoBehaviour
             {
                 Debug.Log("Player Muerto");
 
-                GameManager.Instance.estaMuerto = true;
+                GameManager.Instance.JugadorMuerto();
             }
         }
     }

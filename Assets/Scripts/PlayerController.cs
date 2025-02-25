@@ -93,11 +93,18 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     void Update()
     {
-        
-        HandleMouseLook();
-        HandleKeyRotationContinuous();
-        SmoothRotatePlayer();
-        CheckGround();
+        if (GameManager.Instance.partidaPausada)
+        {
+
+        }
+        else
+        {
+            HandleMouseLook();
+            HandleKeyRotationContinuous();
+            SmoothRotatePlayer();
+            CheckGround();
+        }
+            
 
     }
 

@@ -46,20 +46,20 @@ public class MainMenuController : MonoBehaviour
     // Método para botón 'Options'
     public void OpenOptions()
     {
-        GameManager.Instance.PausarPartida();
+        GameManager.Instance.TogglePauseGame();
         optionsMenu.SetActive(true);
         LeanTween.alpha(optionsMenu, 1f, timeAlpha);
 
     }
     public void OpenOptionsInGame()
     {
-        GameManager.Instance.PausarPartida();
+        GameManager.Instance.TogglePauseGame();
 
     }
 
     public void BackButton()
     {
-        GameManager.Instance.PausarPartida();
+        GameManager.Instance.TogglePauseGame();
         LeanTween.alpha(optionsMenu, 0f, timeAlpha).setOnComplete(() => { optionsMenu.SetActive(false); });
     }
     public void Restart()
