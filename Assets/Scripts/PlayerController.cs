@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
     // ------------------------------
     void Update()
     {
-        if (GameManager.Instance.partidaPausada || GameManager.Instance.estaMuerto)
+        if (GameManager.Instance.partidaPausada || GameManager.Instance.estaMuerto || !GameManager.Instance.partidaEmpezada || GameManager.Instance.hasGanado)
         {
 
         }

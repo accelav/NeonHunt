@@ -27,30 +27,35 @@ public class WaypointPatrol : MonoBehaviour
     void Update()
     {
         // Si la partida está pausada o el jugador está muerto, no hacemos nada
-        if (GameManager.Instance.partidaPausada || GameManager.Instance.estaMuerto)
-            return;
-
-        currentPlayerPosition = playerController.transform.position;
-
-        // Si seguimos al jugador, el destino será su posición
-        if (followPlayer)
+        if (GameManager.Instance.partidaPausada || GameManager.Instance.estaMuerto || !GameManager.Instance.partidaEmpezada || GameManager.Instance.hasGanado)
         {
-            waypoints[2].position = currentPlayerPosition;
-            navMeshAgent.SetDestination(waypoints[2].position);
+
         }
-        // Si no seguimos al jugador, movemos el agente entre waypoints
         else
         {
-            // Asegúrate de resetear la posición del waypoint[1] a algo deseado
-            waypoints[1].position = realWaypoint;
+            currentPlayerPosition = playerController.transform.position;
 
-            // Cuando llega al waypoint, pasamos al siguiente
-            if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+            // Si seguimos al jugador, el destino será su posición
+            if (followPlayer)
             {
-                m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
-                navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
+                waypoints[2].position = currentPlayerPosition;
+                navMeshAgent.SetDestination(waypoints[2].position);
+            }
+            // Si no seguimos al jugador, movemos el agente entre waypoints
+            else
+            {
+                // Asegúrate de resetear la posición del waypoint[1] a algo deseado
+                waypoints[1].position = realWaypoint;
+
+                // Cuando llega al waypoint, pasamos al siguiente
+                if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+                {
+                    m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
+                    navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
+                }
             }
         }
+        
     }
 
     /// <summary>
@@ -75,9 +80,14 @@ public class WaypointPatrol : MonoBehaviour
     {
         // Elige un índice aleatorio en el rango de tus waypoints
         int randomIndex = Random.Range(0, waypoints.Length);
-
-        // Cambia el destino al nuevo waypoint aleatorio
-        navMeshAgent.SetDestination(waypoints[randomIndex].position);
+        if (navMeshAgent.isOnNavMesh)
+        {
+            navMeshAgent.SetDestination(waypoints[0].position);
+        }
+        else
+        {
+            Debug.LogWarning("NavMeshAgent no está sobre un NavMesh");
+        }
 
         // Si deseas que el enemigo deje de 'seguir al jugador' cuando choca:
         followPlayer = false;

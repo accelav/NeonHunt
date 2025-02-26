@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using StarterAssets;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,9 +23,12 @@ public class GameManager : MonoBehaviour
     public int enemigosTotales;
     public int enemigosActuales;
     public bool esperarParDisparar = false;
-
+    StarterAssetsInputs StarterAssetsInputs;
     // -- NUEVO: Variable para guardar el récord --
     public int bestScore = 0;
+
+    // Bandera para saber si ya se han contado todos los enemigos de la escena actual.
+    private bool enemigosInicializados = false;
 
     private void Awake()
     {
@@ -33,8 +36,6 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            // -- NUEVO: Cargamos el récord al iniciar --
             bestScore = PlayerPrefs.GetInt("bestScore", 0);
         }
         else
@@ -44,25 +45,61 @@ public class GameManager : MonoBehaviour
         }
         startButton = false;
         timer = 420f;
+        partidaEmpezada = false;
+        StarterAssetsInputs = FindAnyObjectByType<StarterAssetsInputs>();
+    }
+
+    private void OnEnable()
+    {
+        // Se suscribe al evento para saber cuándo se ha cargado una escena
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // Se llama cada vez que se carga una nueva escena
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Reinicia el contador de enemigos y la bandera
+        enemigosTotales = 0;
+        enemigosInicializados = false;
+        // Espera un frame para que los Start de los enemigos se ejecuten y llamen a EnemiesCounter
+        StartCoroutine(DelayedInitialization());
+    }
+
+    private IEnumerator DelayedInitialization()
+    {
+        yield return null;
+        enemigosInicializados = true;
     }
 
     private void Update()
     {
         enemigosActuales = enemigosTotales;
 
-        if (Input.GetKeyUp(KeyCode.Escape))
-        {
-            TogglePauseGame();
-        }
-
-        if (enemigosActuales <= 0 && !hasGanado)
+        // Solo evaluamos la victoria una vez que se han contado los enemigos
+        if (enemigosInicializados && enemigosActuales <= 0 && !hasGanado && partidaEmpezada)
         {
             PartidaGanada();
-            hasGanado = true; // Para evitar llamar a PartidaGanada repetidamente
+            hasGanado = true; // Evita llamadas repetidas
         }
-        else if (enemigosActuales > 0)
+        else if (enemigosActuales > 0 && partidaEmpezada)
         {
             timer -= Time.deltaTime;
+            if (timer < 0)
+            {
+                estaMuerto = true;
+                timer = 420f;
+            }
+        }
+
+        if (!partidaEmpezada)
+        {
+            UnlockCursor();
+            estaContando = false;
         }
     }
 
@@ -81,8 +118,10 @@ public class GameManager : MonoBehaviour
     public void EmpezarPartida()
     {
         partidaEmpezada = true;
+        estaContando = true;
         partidaPausada = false; // Reiniciamos el estado de pausa
         startButton = true;
+        hasGanado = false;
         estaMuerto = false;
         TimerOn();
         Time.timeScale = 1f;
@@ -130,13 +169,14 @@ public class GameManager : MonoBehaviour
 
     public void ReempezarPartida()
     {
-        ResumeGame(); // Reanuda el juego antes de recargar la escena
         restarting = true;
-        estaMuerto = false;
-        startButton = false;
-        timer = 0f;
+        // Reiniciamos variables importantes
         enemigosTotales = 0;
+        estaMuerto = false;
+        hasGanado = false;
+        partidaEmpezada = false;
         ResetPuntos();
+        // Se carga de nuevo la escena; al hacerlo, OnSceneLoaded se encargará de reinicializar el contador
         SceneManager.LoadScene("GameScene");
     }
 
@@ -147,8 +187,6 @@ public class GameManager : MonoBehaviour
         estaMuerto = false;
         startButton = false;
         ResetPuntos();
-        enemigosTotales = 0;
-        SceneManager.LoadScene("MainMenu");
         UnlockCursor();
     }
 
@@ -165,8 +203,6 @@ public class GameManager : MonoBehaviour
     public void OtorgarPuntos(int puntos)
     {
         puntosTotales += puntos;
-
-        // -- NUEVO: Actualizamos el récord si se supera
         if (puntosTotales > bestScore)
         {
             bestScore = puntosTotales;
@@ -180,6 +216,7 @@ public class GameManager : MonoBehaviour
         puntosTotales = 0;
     }
 
+    // Este método se llama en el Start de cada enemigo para incrementar el contador
     public void EnemiesCounter(int enemigos)
     {
         enemigosTotales += enemigos;

@@ -26,9 +26,10 @@ public class MainMenuController : MonoBehaviour
     public void PlayGame()
     {
         SoundsBehaviour.instance.PlayButtonSound();
-        LeanTween.alpha(MainScreen, 0, timeAlpha).setOnComplete(() => { MainScreen.SetActive(false); });
+        //GameManager.Instance.estaContando = true;
+        MainScreen.SetActive(false);
         GameManager.Instance.EmpezarPartida();
-        SceneManager.LoadScene("GameScene");
+        //SceneManager.LoadScene("GameScene");
     }
 
     // Método para botón 'Options'

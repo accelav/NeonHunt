@@ -30,10 +30,14 @@ public class EnemyBehaviour : MonoBehaviour
         {
             SoundsBehaviour.instance.PlayExplosionTwo();
             GameManager.Instance.OtorgarPuntos(puntosAlMorir);
-            GameManager.Instance.EnemiesCounter(-1);
+            //GameManager.Instance.EnemiesCounter(-1);
             Destroy(gameObject);
         }
 
     }
 
+    private void OnDestroy()
+    {
+        GameManager.Instance.EnemiesCounter(-1);
+    }
 }

@@ -1243,7 +1243,7 @@ AudioSource:
   m_GameObject: {fileID: 789040384}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -3661149567884773260, guid: 56d0dbeac916e2c44b4712f3fd6a0b0c, type: 2}
   m_audioClip: {fileID: 8300000, guid: d8fe8dc2dd2f90c4c9265e9d320a0835, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.663
@@ -3878,6 +3878,7 @@ MonoBehaviour:
   puntosTotales: 0
   puntosIniciales: 0
   enemigosTotales: 0
+  enemigosActuales: 0
   esperarParDisparar: 0
   bestScore: 0
 --- !u!4 &1931673901
