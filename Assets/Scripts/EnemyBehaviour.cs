@@ -8,12 +8,14 @@ public class EnemyBehaviour : MonoBehaviour
     int puntosAlMorir = 2;
 
     WaypointPatrol waypointPatrol;
-    
+    EnemyPowerUpProbability powerUpProb;
+
     void Start()
     {
         
         GameManager.Instance.EnemiesCounter(1);
         waypointPatrol = GetComponent<WaypointPatrol>();
+        powerUpProb = GetComponent<EnemyPowerUpProbability>();
     }
 
     // Update is called once per frame
@@ -38,6 +40,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void OnDestroy()
     {
+        powerUpProb.InstantiateGameObject();
         GameManager.Instance.EnemiesCounter(-1);
     }
 }

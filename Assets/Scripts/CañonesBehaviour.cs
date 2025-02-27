@@ -19,6 +19,7 @@ public class CañonesBehaviour : MonoBehaviour
 
     public BulletPool pool;
     CameraShake CameraShake;
+    EnergyBarControl EnergyBarControl;
     void Awake()
     {
         animacionCañones = FindAnyObjectByType<AnimacionCañones>();
@@ -27,6 +28,7 @@ public class CañonesBehaviour : MonoBehaviour
         //pool = GetComponent<BulletPool>();
         starterInput = FindAnyObjectByType<StarterAssetsInputs>();
         CameraShake = FindObjectOfType<CameraShake>();
+        EnergyBarControl = FindObjectOfType<EnergyBarControl>();
     }
     private void Update()
     {
@@ -44,12 +46,12 @@ public class CañonesBehaviour : MonoBehaviour
         }
         else
         {
-            if (starterInput.fire && Time.time >= nextFireTime)
+            if (starterInput.fire && Time.time >= nextFireTime && EnergyBarControl.canShoot == true)
             {
                 GameManager.Instance.OtorgarPuntos(puntosAlDisparar);
                 animacionCañones.Disparar();
                 CameraShake.Shake();
-
+                EnergyBarControl.HandleBar(-0.33f);
                 // Si hay un enemigo detectado
                 if (crosshair != null && crosshair.enemigoDetectado)
                 {
